@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>掘金网标签订阅</title>
+</head>
+<body>
+<div class="tab-box">
+  <ul class="tab">
+    <li class="active">
+      <a href="javascript:;" data-type="all">全部</a>
+    </li>
+    <li>
+      <a href="javascript:;" data-type="subscribed">订阅</a>
+    </li>
+  </ul>
+  <ul class="tab-list">
+    <li>当前没有数据</li>
+  </ul>
+</div>
+<script>
+// 提交给所有，已订阅两用
+// 用前端的方式定义数据的结构
+  // const labelsArr = [
+  //   {
+  //     id: '22216e03',
+  //     name: '前端',
+  //     tag: '前端',
+  //     follows: 171537,
+  //     articles: 5087,
+  //     isFollow: true
+  //   },
+  //   {
+  //     id: '22216e04',
+  //     name: 'Java',
+  //     tag: 'Java',
+  //     follows: 17153,
+  //     articles: 508,
+  //     isFollow: false
+  //   }
+  // ];
+  // 运算：/all 路由 url上去找所有的标签吧 返回所有数据项 2
+  // /subscribe 路由 返回订阅的数据项 1
+  // url是一切web资源的访问地址 不同的资源设置不同的url
+  // easy-mock 让前端独立于后端 使用假数据完成界面以及功能，后端开发完成后，替换地址就好了
+  // 数据模型+url
+  const baseURL = 'https://www.easy-mock.com/mock/59759892a1d30433d83b7df2/subscribe/'
+  function getLabelData (type) {
+    // 相同的地方抽象在一起  拼装 URL
+    return `${baseURL}${type}`;
+  }
+  // tab 由上下俩部分html tab+ul>li
+  // JSON里 tab 通信函数+通用的结果处理函数
+  // 抽象 返回数据 就是labels JSON数组
+  // 管他什么类型 处理就好
+  function showLabels (labels) {
+    return labels.map(label => {
+      return `
+      <li>${label.name}</li>
+      `
+    })
+  }
+  // tab切换效果？不同的tab切换 带来显示不同的列表
+  // fetch(getLabelData('all')).then(blob => blob.json()).then(data => {
+  //   console.log(data)
+  // })
+  // fetch(getLabelData('subscribed')).then(blob => blob.json()).then(data => {
+  //   console.log(data)
+  // })
+  function loadLabels (type) {
+    let labelUrl = getLabelData(type);
+    fetch(labelUrl).then(blob => blob.json()) //json是js数据格式的标准 所以需要json化
+    .then(data => {
+      document.querySelector('.tab-list').innerHTML = showLabels(data).join('');
+      // console.log(data)
+    })
+  }
+  loadLabels('all');
+  document.querySelectorAll('.tab li a').forEach(item => {
+    item.addEventListener('click', function () {
+      loadLabels(this.dataset.type);
+    }, false)
+  })
+  // 1 路由规则
+  // 网站  资源的聚集地
+  // 用户通过url 即路由访问到相应的资源
+  // 如何设计路由来暴露我们的资源
+  //  由一堆路由构成
+  // /subscribe ---资源主体
+  //     /all   ---动作及特性，子路由
+  //     /subscribed ---动作及特性，子路由
+  //     /add 新增
+  //     /update/:id
+  //     /remove/:id
+  //     subscribe/:id
+  //     建立起来网站结构及地图的能力
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<ul id="favor-users"></ul>
+<a href="javascript:;" class="btn more-btn">...</a>
+<script src="http://mockjs.com/dist/mock.js"></script>
+<script src="http://cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+<script>
+  // 数据？ 资源 设计下url规则
+  // 某篇文章的喜欢者
+  // /entry/:id/lovers/:page
+  // 伪造数据接口
+  // 为什么要假的？ 前后端至少俩个人，工作是不同步的
+  // 数据接口没开发出来，后端哥哥在聊妹
+  // 等一下 一俩天
+  // 在项目上线时间点前俩天，连调一下，没有问题，发布
+  // 将假数据切换成线上真实数据
+  // 对于前端来说假数据可以跑通逻辑
+  // 全栈？前后端一个人做，凡是有切割点
+  Mock.mock('/entry/1234/favors/1', [{
+  'name': '自己成就自己',
+  'avatar': 'https://dn-mhke0kuv.qbox.me/5iqygp7ledSSUCtNy2GkfnQd7ZAoYxX2Dc5FN78L?imageView2/1/w/100/h/100/q/85/interlace/1',
+  'uid': '123'}]);
+  Mock.mock('/entry/1234/favors/2', [{
+  'name': '超超',
+  'avatar': 'https://user-gold-cdn.xitu.io/2017/7/22/cfefa9cff48b562155138c547cfe2498?imageView2/1/w/100/h/100/q/85/interlace/1',
+  'uid': '124'}])
+  let page = 1;
+  function getFavorsByPage(page) {
+    // 请求数据 mock或远程地址
+    // jquery的ajax函数
+    // 1 ajax 用js主动去接一个接口上的数据
+    // 2 需要这些数据，做接下来的工作或动态更新页面
+    // easy-mock 需要去设置
+    // 本地的mock直接本地设置，直接用
+    // fetch 仅限于高级浏览器 es6
+    // getJSON来自jquery 所有浏览器通用
+    $.getJSON('/entry/1234/favors/' + page, function (data) {
+      page++;
+      appendFavors(data);
+    })
+    // fetch('/entry/1234/favors/1').then(blob => blob.json()).then(data => {
+    //   console.log(data)
+    // })
+  }
+  function appendFavors(favors) {
+    document.querySelector('#favor-users').innerHTML += favors.map(favor => {
+      return `
+      <li>
+        <a href="/user/${favor.uid}"></a>
+        <img src="${favor.avatar}" />
+      </li>
+      `
+    })
+  }
+  getFavorsByPage(page);
+  document.querySelector('.more-btn').addEventListener('click', function (event) {
+    // event.preventDefault();
+    page++;
+    console.log(page)
+    getFavorsByPage(page)
+  }, false)
+</script>
+</body>
+</html>
